@@ -8,7 +8,8 @@ important component of what it means to be an """EDM"""" artist, roundabout two 
 thing on the used market.
 #+NAME: Promotional image of a Numark Mixtrack Platinum
 [[file:img/MixtrackPlatinum_angle_3000x1875_web-624x390.jpg]]
-This, as you might have figured is a DJ controller, in particular a (rather cheap) [[https://www.numark.com/product/mixtrack-platinum][Numark Mixtrack Platinum]].
+
+This, as you might have figured, is a DJ controller, in particular a (rather cheap) [[https://www.numark.com/product/mixtrack-platinum][Numark Mixtrack Platinum]].
 Overall, it's a pretty decent thing, at least feature-wise, though my specific used device has a few issues
 with the sliders and the pots, but whatever, it does its job decently well, and this post is certainly not
 any hardware issues with that thing anyways, so let's just keep it at that.

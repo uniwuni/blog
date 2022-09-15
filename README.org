@@ -1,4 +1,3 @@
-#+title: uni's stash of Weird Stuff
 * uni's stash of Weird Stuff
 
 hey i'm uni and this is where i keep documentation of some of the weird technical stuff i worked on.

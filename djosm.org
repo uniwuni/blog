@@ -185,7 +185,7 @@ just a fairly smooth experience. Finally, a smooth and functional way to press b
 buttons, now what could go wrong?
 
 ** keys
-[[https://josm.openstreetmap.de/][JOSM]], my preferred OpenStreetMap editor and a very feature-rich, maybe slightly bulky of software already
+[[https://josm.openstreetmap.de/][JOSM]], my preferred OpenStreetMap editor and a very feature-rich, maybe slightly bulky piece of software already
 has a bunch of keybinds. So many, actually, that using any keys for my software that I'm not 100% sure were
 unused previously felt rather uncomfortable. This is what made me end up at F13-F24. These should be
 pressable just fine - after all, there's still a bunch of keyboards that include them via some convoluted

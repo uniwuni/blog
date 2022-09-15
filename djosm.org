@@ -1,7 +1,6 @@
-#+title: (d)josm or how i spent several hours with virtual keyboards]]
 #+date: <2022-09-15 Do>
 
-* (d)josm or how i spent several hours with virtual keyboards]]
+* (d)josm or how i spent several hours with virtual keyboards
 ** the baseline
 As some of you might know, I'm kinda into making music, as in producing electronic music in a DAW, blablabla
 you get the gist of it. And since mixing or DJing or whatever you want to call it tends to be a rather

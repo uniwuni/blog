@@ -1,0 +1,8 @@
+#+title: uni's stash of Weird Stuff
+* uni's stash of Weird Stuff
+
+hey i'm uni and this is where i keep documentation of some of the weird technical stuff i worked on.
+** about me
+if youre reading this you might know me from [[http://twitter.com/ununiuniuni][twitter]] or discord (uniwuni#7376), but i might be adding some personal info anyways at some point who knows
+** the posts
+- [[file:djosm.org][(d)josm or how i spent several hours with virtual keyboards]]

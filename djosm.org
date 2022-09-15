@@ -1,0 +1,239 @@
+#+title: (d)josm or how i spent several hours with virtual keyboards]]
+#+date: <2022-09-15 Do>
+
+* (d)josm or how i spent several hours with virtual keyboards]]
+** the baseline
+As some of you might know, I'm kinda into making music, as in producing electronic music in a DAW, blablabla
+you get the gist of it. And since mixing or DJing or whatever you want to call it tends to be a rather
+important component of what it means to be an """EDM"""" artist, roundabout two years ago I bought this
+thing on the used market.
+#+NAME: Promotional image of a Numark Mixtrack Platinum
+[[file:img/MixtrackPlatinum_angle_3000x1875_web-624x390.jpg]]
+This, as you might have figured is a DJ controller, in particular a (rather cheap) [[https://www.numark.com/product/mixtrack-platinum][Numark Mixtrack Platinum]].
+Overall, it's a pretty decent thing, at least feature-wise, though my specific used device has a few issues
+with the sliders and the pots, but whatever, it does its job decently well, and this post is certainly not
+any hardware issues with that thing anyways, so let's just keep it at that.
+
+After a short while of using it, I discovered a major issue: I was not really good at mixing at all, which
+was, well, not particularly surprising given how little my time investment was, but nonetheless, that lack
+of motivation stopped me from pursuing that particular interest for a while, so this piece of plastic just
+kept catching dust somewhere in a shelf. Fast-forward to August 2022: Over the past year, I had become
+increasingly invested in [[https://openstreetmap.org][OpenStreetMap]], as one might be able to tell from the several hundred changesets,
+thousands of buildings and dozens of kilometers of roads added from [[https://www.openstreetmap.org/user/univalence][my account]].
+
+So I came up with an idea: What if I could use the controller I so shamelessly discarded to ease the mapping
+process by, say, binding shortcuts for presets to the thing's buttons? This is the goal I had in mind, and
+what I spent about a day trying to do.
+
+** midi2input
+To figure out how to exactly catch the button presses, of course, one needs to know what protocol the Numark
+actually uses. Unsurprisingly, it uses MIDI, just like literally any device related to electronic music.
+As a MIDI controller, it sends a few bytes of data per button press, and since MIDI was such a common
+protocol, it should be easy to find software that processes these presses and turns them into, in our
+case, keypresses, right?
+
+Well, kind of. After quite a bit of searching, the only software that seemed at least somewhat useful and,
+equally importantly, ran on Linux, was [[https://gitlab.com/enetheru/midi2input][midi2input]]. This is a fairly great tool actually, and I definitely
+recommend it to anyone with similar plans, however, using it wasn't quite as straightforward as I was hoping for. In order to genuinely use this tool, one has to write a Lua program that has access to a quite limited
+API provided by midi2input while also serving as an event handler of some sort.
+#+BEGIN_SRC lua
+function script_init()
+end
+
+function midi_recv(status, data1, data2)
+    blue_left = false
+    blue_right = false
+    if(status == 177 and data1 == 6) then -- 177: right controller, 6: jogpad velocity
+      if(data2 < 65 and data2 > 2) then blue_left = true -- < 65: counter-clockwise
+      else if(data2 < 126 and data2 > 2) then blue_right = true
+      end
+    end
+    end
+    if blue_left then
+       keydown(0x0033)
+    else
+       keyup(0x0033)
+    end
+    if blue_right then
+       keydown(0x0035)
+    else
+       keyup(0x0035)
+    end
+    end
+#+END_SRC
+Ignoring all the magic numbers in that code, this is relatively straightforward: the function
+src_lua{midi_recv} is passed a few bytes of data you can process, for example trigger key events. This is
+made slightly easier by the fact that all MIDI events are logged to STDERR, even when unprocessed, so
+figuring out the correct status and data bytes isn't much of a difficult task.
+
+However, between startup
+of the midi2input tool and actually getting the thing to run, one needs to connect the virtual MIDI input
+given by the program to the MIDI output by the device, and, for whatever reason, there's no way of doing
+this automatically by default. Instead, one has to use src_sh{aconnect}, a simple shell tool which works
+without any major issues. Since m2i exposes a way to execute shell commands, this can be done within the
+src_lua{script_init} function, simplifying the whole process by another step.
+
+** demo mode
+Now, in theory I should have been able to write a construct to just process incoming MIDI, use a huge case
+split to figure out what exactly has been pressed, than turn that into a nice little keyboard event. Yet one more thing bugged me: If it is not explicitly turned off, the Numark controller launches into a demo mode by
+default. This does not per se impose any restrictions on processing events, they all register just fine,
+but as the mode consists of flashing lights and rapidly changing numbers and colors all over the machine,
+one might see why it was rather annoying (also, it makes it impossible to change the key lighting by sending
+MIDI events back to the device, but that's besides the point here).
+
+So, in order to leave that demo mode, a simple three-byte MIDI event is not sufficient, no, one needs to
+send a full 14-byte-long SysEx message. Figuring this out was already hard enough: I had to dig through the
+launch scripts for the specific controller in the [[https://mixxx.org/][Mixxx]] source code, yielding the sequence src_lua{{0xF0, 0x00, 0x01, 0x3F, 0x7F, 0x3A, 0x60, 0x00, 0x04, 0x04, 0x01, 0x00, 0x00, 0xF7}}, just in case anyone ever needs it.
+
+Now this was where this whole idea started to become more and more annoying. While midi2input is able to
+send regular old MIDI events like note triggers or control changes, SysEx messages were out of scope.
+src_sh{amidi} was an option, and indeed I used it for a while, as command-line tools could be easily used
+from within the Lua code. However, this posed issues when you reconnected the device, or came across other
+weird situations in which src_sh{amidi} was already unable to access the controller as it was connected
+to m2i. So this was an option I ruled out as well, although in hindsight, it would have probably way easier
+to fix the edge cases that made src_sh{amidi} break instead of, you might have seen this coming, adding
+SysEx-functionality to m2i myself.
+
+** sysex in m2i - the alsa part
+Luckily, at least midi2input is a tool of fairly comprehensible size: After a short investigation, I noticed
+that what I needed to change was the src_cpp{AlsaSeq} class, whose header looked like the following:
+#+BEGIN_SRC CPP
+[...]
+class AlsaSeq {
+public:
+    AlsaSeq() = default;
+    int open();
+    void close();
+
+    int connect( const std::string &client_name, const std::string &port_name );
+
+    midi_event event_receive();
+    int event_pending();
+    void event_send( const midi_event &event );
+
+    explicit operator bool() const { return seq; }
+
+    ~AlsaSeq();
+[...]
+};
+[...]
+#+END_SRC
+So all it took was adding a function src_cpp{AlsaSeq::sysex_send(unsigned char* data, int length)}, which
+made the whole thing seem a little less daunting. Now, how does one do that, exactly? After another few
+minutes of skimming through the ALSA includes, I finally came across a macro src_cpp{snd_seq_ev_set_sysex(ev,datalen,dataptr)}, setting SysEx data for a given MIDI event. Since the
+event metadata itself was fairly uniform among all sorts of MIDI processes, src_cpp{AlsaSeq::event_send}
+looked like a plausible function to copy code from.
+#+BEGIN_SRC CPP
+void
+AlsaSeq::event_send(const midi_event &event )
+{
+    snd_seq_event_t ev;
+    snd_seq_ev_clear( &ev );
+    snd_seq_ev_set_source( &ev, oport_id );
+    snd_seq_ev_set_subs( &ev );
+    snd_seq_ev_set_direct( &ev );
+   [event data handling]
+    snd_seq_event_output( seq, &ev);
+    snd_seq_drain_output( seq );
+}
+#+END_SRC CPP
+Copy-pasting these lines and utilizing the sysex_send macro seemed to work out rather well,
+at least after a bunch of type and pointer shenanigans it compiled fine. But I was not quite done with this
+little fix yet, as the Lua API required changes as well. Please prepare for things getting even worse,
+somehow.
+
+** sysex in m2i - the lua part
+In order to make the SysEx functionality available in Lua, I somehow had to transform a src_cpp{lua_State*}
+(thanks for this amazing capitalization, Lua devs) into an int and a char pointer. Anyone familiar with the
+Lua API should probably skip this section unless you're really, really interested in seeing what could go
+wrong when it comes to that piece of software.
+
+So what we are trying to achieve is to define the C implementation of a function that takes a single Lua
+table as an argument, and sends a SysEx message based on that data.
+While Lua places any arguments you're calling a function with on its own stack accessible through the
+state object, it's surprisingly difficult to actually access the data on that stack in somewhat simple ways.
+To acquire the length of the table argument, the API provides two different methods, namely
+the auxiliary src_c{luaL_len}, which returns the length of a value on the stack directly, and src_c{lua_len},
+which pushes the length back onto the stack. This difference is not at all mentioned in the actual
+documentation, so one has to derive it from the type signature, which, well it could be worse I guess.
+Actually accessing the data within the table wasn't too difficult, still a bunch of (at least
+seemingly) redundant options and a ton of docs that deserve a bunch of clarification, but there's
+definitely been worse issues so far. This is what I ended up with:
+#+BEGIN_SRC CPP
+int
+lua_sysexsend( lua_State *L )
+{
+  size_t length = luaL_len(L, -1);
+  unsigned char* data = (unsigned char*) malloc(length);
+  for(size_t i = 1; i <= length; i++) {
+    lua_rawgeti(L, -1, i);
+    unsigned char x = (unsigned char) lua_tointeger(L, -1);
+    data[i-1] = x;
+    lua_pop(L, 1);
+  }
+  #ifdef WITH_ALSA
+    if( m2i::seq )m2i::seq.sysex_send(data, length);
+  #endif
+
+  free(data);
+  return 0;
+}
+#+END_SRC CPP
+Feel free to criticize this pile of garbage, but after about a dozen typos and type errors and only a few
+Lua-stack-induced segfaults, it worked surprisingly well! No unpredictable crashes or issues after restarts,
+just a fairly smooth experience. Finally, a smooth and functional way to press buttons by pressing other
+buttons, now what could go wrong?
+
+** keys
+[[https://josm.openstreetmap.de/][JOSM]], my preferred OpenStreetMap editor and a very feature-rich, maybe slightly bulky of software already
+has a bunch of keybinds. So many, actually, that using any keys for my software that I'm not 100% sure were
+unused previously felt rather uncomfortable. This is what made me end up at F13-F24. These should be
+pressable just fine - after all, there's still a bunch of keyboards that include them via some convoluted
+shortcut, and JOSM explicitly mentions them in the pressable keys. To figure out what codes I needed to
+use in the src_lua{keypress} function in order to, well, have the correct keys be pressed, I took another
+look in the m2i examples, and came across this line:
+#+BEGIN_SRC lua
+-- look to X11\keysymdef.h for the full list
+XK_space                       = 0x0020  --/* U+0020 SPACE */
+#+END_SRC
+This looked fairly promising, and the list included in the mentioned header filewas rather complete, there
+was only one tiny problem: It was entirely wrong. The script referred to X11 keysyms, however, as it sets
+up a virtual [[https://en.wikipedia.org/wiki/Evdev][evdev]] device and thus acts on a way lower level, the X11 codes are entirely irrelevant.
+After quite a bit of searching for different kinds of keycode lists in this setup, at some point I figured
+out I really needed [[https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h][the Linux input event codes]]. And indeed, for regular alphanumeric keys or F1-F12 they
+worked just fine, but with F13-F24 I still had no chance of getting them running in a desktop environment.
+But in yet another surprising turn, they were actually being "pressed" in some sense: the kernel registered
+the presses just fine and the appropriate events were generated, as one could see using the great [[https://gitlab.freedesktop.org/libevdev/evtest][evtest
+tool]], but X seemed to refuse to process them. After a solid 30 minutes of googling, a solution was in sight:
+By changing the src_sh{.Xmodmap} file, one could in some sense activate these keys to be processed by X,
+and this seemed to work decently well, too. Yet whatever I did, I could not get them registered by JOSM,
+although they were offered as options. Something was off here, and I was preparing for yet another round
+of custom hotfixes - maybe change the virtual input device offered by m2i? - when I realised that JOSM was,
+as the name might have spoiled already, written in Java. Once again, a few rounds of searching online and
+I was finally able to make sure that I was not the only person having this problem, Java and F13+ do not
+seem to interact well as somehow, the keybinds chosen by the JDK entirely differ from the "real" ones .
+
+This lead to even closer investigation, finally noticing that [[https://github.com/openjdk/jdk/blob/739769c8fc4b496f08a92225a12d07414537b6c0/src/java.desktop/unix/classes/sun/awt/X11/XKeysym.java][this file]] that seems to define the mapping
+from X keycodes to Java key events does not include F13 anywhere, making all of this a rather hopeless task,
+at least as far as I'm aware. Honestly though, this makes me wonder why they were included in the JOSM
+config in the first place - are there any other systems where Java maps them to real keys? Whatever the true
+reasons behind all these issues might have been though, I was not ready to give up my precious special keys
+just yet.
+
+** JOSM plugins
+Given that it is a fairly respectable program, JOSM has a fully fledged plugin API that allows you to
+write your own Java extensions. Now what I was trying to do was nothing less than listen to the kernel-level
+input events directly via [[https://github.com/progman32/evdev-java][evdev-java]], which would allow me to include whole new layers of functionality instead of only opting for shortcuts.
+After installing /Subversion/ of all things, checking out the JOSM source code and building the entire
+thing, which already took forever, I realized I had no clue how Java build systems work, was left with a
+very fucked up state of Eclipse and ultimately surrendered to the technical difficulties.
+
+** what i ended up with
+Finally, I just ended up using Ctrl-Shift-Fn and Ctrl-Alt-Shift-Fn, since these were almost unused
+and not much of a hassle to configure. They've been quite useful as a shortcut for certain presets and so
+on, so overall it's certainly worth trying this out, especially if you're not opposed to little fixes that
+teach you quite a lot - I was surprised at how simple writing a bit of C actually was, in particularly when
+compared with the hell that is getting Java stuff to even run, as mentioned. Whatever it may be, this whole
+idea has quite a bit of potential - I've also been using the DJ controller as a game controller for the
+rhythm game [[https://github.com/Drewol/unnamed-sdvx-clone][Unnamed SDVC Clone]], and so far I've never experienced any latency issues or anything alike,
+if you got any of these things lying around, try this out too!

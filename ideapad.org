@@ -1,6 +1,6 @@
 #+date: <2022-09-16 Fr>
 
-* ubuntu on a ideapad flex 5
+* ubuntu on an ideapad flex 5
 ** what is this about
 A few weeks ago, I bought an [[https://psref.lenovo.com/syspool/Sys/PDF/IdeaPad/IdeaPad_Flex_5_14ARE05/IdeaPad_Flex_5_14ARE05_Spec.pdf][Lenovo Ideapad Flex 5 14ARE05]] for university use, basically a
 mid-range convertible with a Ryzen 5 CPU and due to the fact that Windows is just insufferable,

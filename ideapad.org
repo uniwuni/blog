@@ -1,0 +1,49 @@
+#+date: <2022-09-16 Fr>
+
+* ubuntu on a ideapad flex 5
+** what is this about
+A few weeks ago, I bought an [[https://psref.lenovo.com/syspool/Sys/PDF/IdeaPad/IdeaPad_Flex_5_14ARE05/IdeaPad_Flex_5_14ARE05_Spec.pdf][Lenovo Ideapad Flex 5 14ARE05]] for university use, basically a
+mid-range convertible with a Ryzen 5 CPU and due to the fact that Windows is just insufferable,
+I planned to set up some Linux distribution. Since I am more lazy than I maybe should be
+with those things, I chose Ubuntu, and most things worked out of the box. However, the few
+things that do not are pretty noteworthy so I'm just gonna list what I had to do to make it
+work fully.
+
+** bios things
+For some reason Secure Boot was already turned off when I bought the device, maybe because
+it was used for showcase by the vendor? No clue, but I had to change the boot order though,
+so you might wanna keep that in mind. Also, consider inverting the Fn functionality, it tends
+to be pretty annoying to have to hold Fn everytime you need any F key.
+
+** the flip feature and touch
+Since it's a convertible, the screen can be turned by almost 360 degrees, and at some point
+a kind of touchscreen mode should activate. GNOME seems to natively support this per se,
+however, the drivers for this specific accelerometer or whatever is used were not shipped.
+Installing [[https://github.com/lukas-w/yoga-usage-mode][yoga-usage-mode]] was sufficient though - although it recommends some more userspace
+software, it simply worked after loading the kernel module, since GNOME seemed to detect the
+input device.
+
+There's still a few issues: Sometimes it takes two rotations for the device to correctly
+return to laptop mode, with the cursor just not showing up and the touchpad not really working.
+At other times, the cursor is invisible, but that can usually be fixed by navigating it to
+the very left or whereever your dock is located. Also, pinch to zoom and a few other gestures
+don't really work with the touchpad, but that's probably a userspace issue, completely
+independent of the hardware.
+
+The pen feature works fine too and didn't require any additional setup, however, the button
+at the top of the pen isn't recognized, not sure what one could do about that though, usually
+two buttons are sufficient anyways.
+
+** fingerprint sensor
+The laptop has a fingerprint sensor, but it was not recognized at all. Making it work took
+installing [[https://launchpad.net/ubuntu/focal/+package/libfprint-2-tod-dev][libfprint-tod-2]], a special version of the fingerprint library thingy, after which it still worked rather inconsistently if at all, if I remember correctly. Installing
+[[https://github.com/Popax21/synaTudor][synaTudor]], yet another weird userspace quasi-driver, was another step to functionality,
+however, one had to disable the fprintd daemon for whatever reason, or otherwise the device
+would be constantly locked up and therefore not really work either. Nonetheless, it's kinda
+inconsistent, especially when waking up - it takes a while for the message to unlock via
+fingerprint to show up, and even then it's rare that it's recognized at all. On the other hand,
+sometimes it works without any issues, so maybe it's worth taking a closer look at what services are running exactly, but since it's not exactly the most important feature, I'll
+save that for the future.
+
+** conclusion
+yeah it works pretty well tbh

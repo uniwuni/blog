@@ -5,3 +5,5 @@ hey i'm uni and this is where i keep documentation of some of the weird technica
 if youre reading this you might know me from [[http://twitter.com/ununiuniuni][twitter]] or discord (uniwuni#7376), but i might be adding some personal info anyways at some point who knows
 ** the posts
 - [[file:djosm.org][(d)josm or how i spent several hours with virtual keyboards]]
+** wah
+ wah

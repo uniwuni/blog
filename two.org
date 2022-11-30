@@ -1,0 +1,26 @@
+* reasons for 2 to not exist
+** uni what the fuck are you talking about
+In mathematics, there's a bunch of ways infinities can be large. Usually, the existence of these
+can not be derived [[https://en.wikipedia.org/wiki/Zermelo%E2%80%93Fraenkel_set_theory][from the usual axioms]] yielding an important logical component to the study
+of these [[https://en.wikipedia.org/wiki/Large_cardinal][large cardinals]]. But many of these properties include the assumption that the
+cardinal number in question is infinite - once we remove that assumption (or sometimes
+restate the property entirely) we can see that 2 is, in many regards, a pretty huge
+number.
+** set-theoretical stuff
+*** regularity
+A [[https://en.wikipedia.org/wiki/Cardinal_number][cardinal number]] $\kappa$ is [[https://en.wikipedia.org/wiki/Regular_cardinal][regular]] if it cannot be expressed as an indexed sum of numbers smaller
+than $\kappa$ where the indexing number is also smaller than $\kappa$, i.e. there's no index
+$\iota < \kappa$ such that a family of sets $A_i$ for $i \in \iota$ exists for which
+$\sum_{i \in \iota} A_i > \kappa$ holds.
+
+For example, the cardinal $\alpeh_0$, as in the size of the natural numbers, is regular,
+since every finitely indexed sum of finite numbers is finite.
+However, the only finite regular cardinals are 0, 1 and 2 - every other natural number $n$ can be
+expressed as the sum $1 + (n-1)$, both of which are smaller than n.
+
+Since regularity is an important part of the definition of [[https://en.wikipedia.org/wiki/Inaccessible_cardinal][inaccessible cardinals]], which are
+indeed quite large, I guess this kind of makes 2 way larger in relationship to 0 and 1 at least.
+** categories
+*** 2 is cartesian closed
+Consider the category with two objects and one arrow between them, e.g. the [[https://ncatlab.org/nlab/show/interval+category][interval category]].
+It has all limits and is cartesian closed, a property

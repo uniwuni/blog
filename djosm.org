@@ -1,5 +1,5 @@
 #+date: <2022-09-15 Do>
-
+#+LATEX_CLASS: koma-book
 * (d)josm or how i spent several hours with virtual keyboards
 ** the baseline
 As some of you might know, I'm kinda into making music, as in producing electronic music in a DAW, blablabla

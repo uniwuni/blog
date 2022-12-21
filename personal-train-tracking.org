@@ -35,7 +35,7 @@ In order to figure out where I've been exactly, I use the "ÖPNVKarte" view of O
 This one's pretty boring, I just add a point for each village or whatever to the file and tag it with the name and maybe a Wikidata ID.
 
 *** metadata
-I've got another [[org:blog/calcLength.org][literate org file]] with python source blocks that use the [[https://pypi.org/project/geojson/][GeoJSON library]] as well as [[https://pypi.org/project/geojson-length/][GeoJSON-length]] to compute some metadata, in particular the combined lengths of the routes I've walked, as well as the number of train and bus stations which I usually update after adding new data.
+I've got another [[file:calcLength.org][literate org file]] with python source blocks that use the [[https://pypi.org/project/geojson/][GeoJSON library]] as well as [[https://pypi.org/project/geojson-length/][GeoJSON-length]] to compute some metadata, in particular the combined lengths of the routes I've walked, as well as the number of train and bus stations which I usually update after adding new data.
 
 ** use
 There is none, honestly, it's just another fun little thing to track, maybe it's inspiring or something but that's not really the point to me so far.

@@ -23,4 +23,4 @@ indeed quite large, I guess this kind of makes 2 way larger in relationship to 0
 ** categories
 *** 2 is cartesian closed
 Consider the category with two objects and one arrow between them, e.g. the [[https://ncatlab.org/nlab/show/interval+category][interval category]].
-It has all limits and is cartesian closed, a property
+It has all limits and is cartesian closed, a property commonly associated with things that are rather big, e.g. the category of sets

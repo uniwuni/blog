@@ -39,6 +39,7 @@ I've got another [[org:blog/calcLength.org][literate org file]] with python sour
 
 ** use
 There is none, honestly, it's just another fun little thing to track, maybe it's inspiring or something but that's not really the point to me so far.
+
 * Footnotes
 [fn:2] There might be a way to automate this, but I really don't
 think it's worth the time honestly.

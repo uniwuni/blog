@@ -6,5 +6,6 @@ if youre reading this you might know me from [[http://twitter.com/ununiuniuni][t
 ** the posts
 - [[file:djosm.org][(d)josm or how i spent several hours with virtual keyboards]]
 - [[file:ideapad.org][ubuntu on an ideapad flex 5]]
+- [[file:personal-train-tracking.org][me tracking my train routes]]
 ** wah
  wah

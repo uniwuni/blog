@@ -1,0 +1,80 @@
+* Init
+#+begin_src emacs-lisp :results none
+(setq org-babel-python-command "/usr/bin/python3")
+#+end_src
+
+* Calculate total length of walked paths
+#+NAME: strecke
+#+begin_src python :directory ~/Sync/geo :results append
+import geojson
+from geojson_length import calculate_distance, Unit
+with open("laufstrecke.json") as f:
+    geodata = geojson.load(f)
+features = geodata["features"]
+length = 0
+for i in features:
+    length += calculate_distance(i, Unit.meters)
+return length
+#+end_src
+
+#+RESULTS:
+: 295016.1327196991
+: 340672.2770525904
+: 343793.6048899351
+: 345105.8685644845
+: 347240.1728041377
+: 349649.13877388847
+: 359348.2099387983
+: 369829.0806189613
+: 370719.5783375216
+: 372683.50423882005
+: 374100.5789237921
+: 377081.83837763686
+: 377306.1942548967
+
+* Number of train stations
+#+NAME: trains
+#+begin_src python :directory ~/Sync/geo :results append
+import geojson
+from geojson_length import calculate_distance, Unit
+with open("bahn.json") as f:
+    geodata = geojson.load(f)
+features = geodata["features"]
+return len(list(filter(lambda x: "name" in x["properties"], features)))
+#+end_src
+
+#+RESULTS:
+: 83
+: 85
+
+
+* Number of bus stations
+#+NAME: bus
+#+begin_src python :directory ~/Sync/geo :results append
+import geojson
+from geojson_length import calculate_distance, Unit
+with open("bus.json") as f:
+    geodata = geojson.load(f)
+features = geodata["features"]
+return len(list(filter(lambda x: "name" in x["properties"], features)))
+#+end_src
+
+#+RESULTS:
+: 29
+: 30
+: 32
+: 34
+
+* Number of Ortschaften
+#+NAME: orte
+#+begin_src python :directory ~/Sync/geo :results append
+import geojson
+from geojson_length import calculate_distance, Unit
+with open("orte.json") as f:
+    geodata = geojson.load(f)
+features = geodata["features"]
+return len(list(filter(lambda x: "place_name" in x["properties"], features)))
+#+end_src
+
+#+RESULTS:
+: 263

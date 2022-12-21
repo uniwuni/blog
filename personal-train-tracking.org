@@ -1,0 +1,46 @@
+* semi-manual tracking where i've been - my workflow
+
+** motivation
+Despite all odds, I do indeed go outside and touch grass, and counterintuitively I sometimes go even more outsider by going inside public transport, something that is actually viable over where I live.
+Since I'm also almost unhealthily addicted to collect data about myself, I try to track
+the roads and paths I've walked on as well as the train and bus stops I've visited, even the
+routes inbetween.
+
+** things i have tried and abandoned
+- Google Maps My Places: I used that for train/bus stations for a while, but it's arguably pretty horrible, you can only see a couple places at once and it's just incredibly limited.
+- [[https://umap.openstreetmap.de/en/][OpenStreetMap UMap]]: Great interface honestly, especially with the styling features and all that. Used it for quite a while, but it's just horrible insecure since there's no way to
+  restrict people who can view your map, which combined with the 4-digit map IDs just doesn't feel particularly safe for a map that makes it pretty easy to determine where I live and
+  the places I regularly visit.
+- GPS tracking only: While I use GPS tracking as an important step in tracking walked tracks,
+  it's both to inaccurate and unreliable (well, at least my phone is) to suffice.
+- [[https://gpx.studio/][gpx.studio:]] Useful tool, especially the "street-matching" feature, but GPX is not made for long tracks that consist of segments accumulated over months or even years.
+- Mapbox custom maps: This is essentially yet another pretty well-done online GeoJSON editor, but since I only used it to track villages I've been to, I've moved the little data there was to local files.
+** what am i doing currently
+In my Org main folder, there's a subdirectory that contains four [[https://geojson.org/][GeoJSON]] files: one for walked routes, one for bus data, one for train (which contains subways and trams) data, and one for
+overall localities ("[[https://en.wikipedia.org/wiki/Ortschaft][Ortschaften]]") I've been to. This is more or less the place where all the magic happens.
+
+*** when i go outside
+When I'm walking somewhere I know (or at least think) I haven't been to, I use the app [[https://play.google.com/store/apps/details?id=com.ilyabogdanovich.geotracker&hl=en&gl=US][Geo
+Tracker]][fn:1] to record my routes as GPX files. Once home, I retrace the
+not-yet-visited parts on my currently preferred GeoJSON editor, [[https://geojson.io][geojson.io]], and once again save it, which makes for a pretty simple setup, I guess.
+
+*** public transport
+Since I live near Nuremberg, most of my transport activities take place within the [[https://www.vgn.de/][VGN (Verkehrsverbund Großraum Nürnberg)]], who in turn provide [[https://play.google.com/store/apps/details?id=com.mdv.VGNCompanion&hl=en&gl=US][their own app]] for routing.
+When I go somewhere new, I use the Share feature for their routes to post them to a certain
+1-member telegram group. Once one of my computers and a network connection is in reach, I
+use [[https://github.com/karlicoss/telegram2org][telegram2org]] to add a task based on the route message into my org mode agenda,. Once again, my go-to editor for actually adding stops and routes is geojson.io. I add stops as points with a name tag, and add routes without any metadata. To avoid redundancy, multiple tracks close to another that are in some way part of the same route are only added once.
+In order to figure out where I've been exactly, I use the "ÖPNVKarte" view of OpenStreetMap and retrace the routes from there [fn:2].
+
+*** localities
+This one's pretty boring, I just add a point for each village or whatever to the file and tag it with the name and maybe a Wikidata ID.
+
+*** metadata
+I've got another [[org:blog/calcLength.org][literate org file]] with python source blocks that use the [[https://pypi.org/project/geojson/][GeoJSON library]] as well as [[https://pypi.org/project/geojson-length/][GeoJSON-length]] to compute some metadata, in particular the combined lengths of the routes I've walked, as well as the number of train and bus stations which I usually update after adding new data.
+
+** use
+There is none, honestly, it's just another fun little thing to track, maybe it's inspiring or something but that's not really the point to me so far.
+* Footnotes
+[fn:2] There might be a way to automate this, but I really don't
+think it's worth the time honestly.
+
+[fn:1] I actually subscribed to the premium version - the app is probably the best GPS tracker I know of, and the OSM/Mapbox background map is definitely 70 cents a month.

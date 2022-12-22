@@ -17,7 +17,7 @@ for i in features:
 return length
 #+end_src
 
-#+RESULTS:
+#+RESULTS: strecke
 : 295016.1327196991
 : 340672.2770525904
 : 343793.6048899351
@@ -31,6 +31,7 @@ return length
 : 374100.5789237921
 : 377081.83837763686
 : 377306.1942548967
+: 377944.05120070616
 
 * Number of train stations
 #+NAME: trains

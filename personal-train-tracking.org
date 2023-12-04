@@ -47,8 +47,10 @@ However, I still keep the files downloaded in order to run processing on them, s
 are still available from a single cURL command (even without authentification - doesn't seem all that
 secure either, but it's way less problematic than the full maps).
 ** public transport
-I have also startd to use [[https://traewelling.de][Träwelling]], which allows you to track your rides in more detail and simplifies
+I have also started to use [[https://traewelling.de][Träwelling]], which allows you to track your rides in more detail and simplifies
 the process of reconstructing routes a decent bit.
+* Update December 2023
+Now I use [[https://travelynx.de][Travelynx]] instead due to better integration with a discord bot and also record routes via OSMAnd instead of the other GPS tracker.
 * Footnotes
 [fn:2] There might be a way to automate this, but I really don't
 think it's worth the time honestly.

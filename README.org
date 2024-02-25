@@ -1,3 +1,5 @@
+* oopsie all of this is on [[https://uniwuni.github.io][the webbed site]] now
+
 * uni's stash of Weird Stuff
 
 hey i'm uni and this is where i keep documentation of some of the weird technical stuff i worked on.
@@ -10,3 +12,4 @@ if youre reading this you might know me from [[http://twitter.com/ununiuniuni][t
 - [[file:org-fit.org][another bizarre attempt at tracking when i go outside (in org mode)]]
 ** wah
  wah
+
